@@ -44,6 +44,11 @@ var BitField = function(n){
         var j = idx%32;
         intView[i] &= ~(1<<j);
     };
+    this.invert = function(idx){
+        var i = idx>>5;//divide by 32
+        var j = idx%32;
+        intView[i] ^= 1<<j;
+    };
     this.getBitList = function(){
         var arr = [];
         for(var idx = 0; idx < n; idx++){
@@ -89,3 +94,5 @@ var BitField = function(n){
         }
     };
 };
+
+module.exports = BitField;
