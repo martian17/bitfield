@@ -5,6 +5,8 @@ var BitField = function(n){
     var int8View = new Uint8Array(buff);
     var intView = new Int32Array(buff);
     this.uint8 = int8View;
+    this.int32 = intView;
+    this.float64 = floatView;
     var that = this;
     
     var rule = [
@@ -98,14 +100,17 @@ var BitField = function(n){
     this.bitshiftNbytes = function(addr,n,k){//shift k bits
         var offset = k%8;
         var shifts = k>>3;
+        console.log(offset,shifts);
         for(var i = addr+n-1; i > addr+shifts; i--){//always one on the left
             var byte1 = int8View[i-shifts];//right byte
             var byte0 = int8View[i-shifts-1];//left byte
-            int8View[i-shifts] = byte0<<(8-offset)|byte1>>offset;//concatenating left and right byte partially
+            int8View[i-shifts] = (byte0<<(8-offset))|(byte1>>offset);//concatenating left and right byte partially
         }
-        int8View[addr+shifts] = 0|int8View[addr]>>offset;//left most useful byte
+        console.log(int8View[addr]);
+        console.log(int8View[addr] >> offset);
+        int8View[addr+shifts] = 0|(int8View[addr]>>offset);//left most useful byte
         //filling 0 on the left
-        for(var i = addr+shifts; i >= addr; i--){
+        for(var i = addr+shifts-1; i >= addr; i--){
             int8View[i] = 0;
         }
     };
