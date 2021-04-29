@@ -93,6 +93,22 @@ var BitField = function(n){
             that.clear(n-1);
         }
     };
+    
+    //extension for sha256
+    this.bitshiftNbytes = function(addr,n,k){//shift k bits
+        var offset = k%8;
+        var shifts = k>>3;
+        for(var i = addr+n-1; i > addr+shifts; i--){//always one on the left
+            var byte1 = int8View[i-shifts];//right byte
+            var byte0 = int8View[i-shifts-1];//left byte
+            int8View[i-shifts] = byte0<<(8-offset)|byte1>>offset;//concatenating left and right byte partially
+        }
+        int8View[addr+shifts] = 0|int8View[addr]>>offset;//left most useful byte
+        //filling 0 on the left
+        for(var i = addr+shifts; i >= addr; i--){
+            int8View[i] = 0;
+        }
+    };
 };
 
 module.exports = BitField;
