@@ -99,15 +99,15 @@ var BitField = function(n){
     //extension for sha256
     this.bitshiftRightNbytes = function(addr,n,k){//shift k bits
         var offset = k%8;
-        var shifts = k>>3;
+        var shifts = k>>>3;
         console.log(offset,shifts);
         for(var i = addr+n-1; i > addr+shifts; i--){//always one on the left
             var byte1 = int8View[i-shifts];//right byte
             var byte0 = int8View[i-shifts-1];//left byte
-            int8View[i] = (byte0>>(8-offset))|(byte1<<offset);//concatenating left and right byte partially
+            int8View[i] = (byte0>>>(8-offset))|(byte1<<offset);//concatenating left and right byte partially
         }
         console.log(int8View[addr]);
-        console.log(int8View[addr] >> offset);
+        console.log(int8View[addr] >>> offset);
         int8View[addr+shifts] = (int8View[addr]<<offset);//left most useful byte
         //filling 0 on the left
         for(var i = addr+shifts-1; i >= addr; i--){
@@ -117,20 +117,34 @@ var BitField = function(n){
     
     this.bitshiftLeftNbytes = function(addr,n,k){//shift k bits
         var offset = k%8;
-        var shifts = k>>3;
+        var shifts = k>>>3;
         console.log(offset,shifts);
         for(var i = addr; i <　addr+n-1-shifts; i++){
             var byte1 = int8View[i+shifts];//left byte
             var byte2 = int8View[i+shifts+1];//right byte
-            int8View[i] = (byte2<<(8-offset))|(byte1>>offset);
+            int8View[i] = (byte2<<(8-offset))|(byte1>>>offset);
         }
         console.log(int8View[addr]);
-        console.log(int8View[addr] >> offset);
-        int8View[addr+n-1-shifts] = (int8View[addr+n-1]>>offset);//right most useful byte
+        console.log(int8View[addr] >>> offset);
+        int8View[addr+n-1-shifts] = (int8View[addr+n-1]>>>offset);//right most useful byte
         //filling 0 on the left
         for(var i = addr+n-shifts; i < addr+n; i++){
             int8View[i] = 0;
         }
+    };
+    
+    this.bitshift32left = function(addr,n){//at address addr, shifts n
+        //uses the integer 32 view
+        console.log(intView[addr]);
+        intView[addr] = intView[addr] >>> n;
+        console.log(intView[addr]);
+    };
+    
+    this.bitshift32right = function(addr,n){//at address addr, shifts n
+        //uses the integer 32 view
+        console.log(intView[addr]);
+        intView[addr] = intView[addr] << n;
+        console.log(intView[addr]);
     };
 };
 
